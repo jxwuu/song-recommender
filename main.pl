@@ -7,8 +7,8 @@ root_url("http://ws.audioscrobbler.com/2.0").
 api_key("5dd0808d6f467e08e647a024417e7318").
 api_method("tag.gettoptracks").
 
-%% parse_tag_param(Input, TagParam) :-
-%% 	string_concat("tag=", Input, TagParam).
+param_tag(Tag, TagParam) :-
+	string_concat("tag=", Tag, TagParam).
 
 param_method(Method, MethodParam) :-
 	string_concat("method=", Method, MethodParam).
@@ -42,20 +42,21 @@ build_url(Tag, URL) :-
 	root_url(Root),
 	api_key(Key),
 	api_method(Method),
-	%% parse_tag_param(Input, TagParam),
+	param_tag(Tag, TagParam),
 	param_method(Method, MethodParam),
 	param_limit(10, LimitParam),
 	param_key(Key, KeyParam),
 	string_concat(Root, "?", R1),
 	string_concat(R1, MethodParam, R2),
 	string_concat(R2, "&", R3),
-	string_concat(R3, Tag, R4),
+	string_concat(R3, TagParam, R4),
 	string_concat(R4, "&", R5),
 	string_concat(R5, LimitParam, R6),
 	string_concat(R6, "&", R7),
 	string_concat(R7, KeyParam, R8),
 	string_concat(R8, "&", R9),
 	string_concat(R9, "format=json", URL).
+	%% write(URL).
 
 call_api(Input) :-
 	build_url(Input, URL),
