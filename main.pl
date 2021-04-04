@@ -62,10 +62,13 @@ json_to_songs(Dict, Dict.tracks.track).
 % writes the "name" field of each Track to the console
 write_songnames([]).
 write_songnames([Track|T]) :-
-	Song = Track.name,
- 	string_concat(Song, " \n", SongNL),
- 	write(SongNL),
-  	traverse_dict(T).
+	Song_name = Track.name,
+ 	Song_artist = Track.artist.name,
+ 	string_concat(Song_artist, " - ", Song_artistD),
+ 	string_concat(Song_artistD, Song_name, Song_artist_name),
+ 	string_concat(Song_artist_name, "\n", Song_final),
+ 	write(Song_final),
+  	write_songnames(T).
 
 % makes the HTTP get request to lastFM's API
 % Songs is a list of Song atoms (Song is an atom representing a song name)
