@@ -8,6 +8,8 @@
 root_url("http://ws.audioscrobbler.com/2.0").
 api_key("5dd0808d6f467e08e647a024417e7318").
 api_method("tag.gettoptracks").
+possible_tagArray(["genre", "artist", "Genre", "Artist"]).
+% api_artistMethod("artist.gettoptracks").
 
 
 
@@ -16,6 +18,9 @@ api_method("tag.gettoptracks").
 % converts a Tag atom into the string "tag=<Tag>", for the "tag" URL parameter
 param_tag(Tag, TagParam) :-
 	string_concat("tag=", Tag, TagParam).
+
+% param_artist(Artist, ArtistParam) :-
+%	string_concat("artist=", Artist, ArtistParam).
 
 % converts a Method atom into the string "method=<Method>", for the "method" URL parameter
 param_method(Method, MethodParam) :-
@@ -52,7 +57,6 @@ build_url(Tag, URL) :-
 	%% write(URL).
 
 
-
 % -----API CALLER AND JSON HANDLERS-----
 
 % converts dictionary Dict that json_read_dict() (in make_api_call()) returns
@@ -70,7 +74,7 @@ write_songnames([Track|T]) :-
  	write(Song_final),
   	write_songnames(T).
 
-% makes the HTTP get request to lastFM's API
+% makes the HTTP get request to lastFMs API
 % Songs is a list of Song atoms (Song is an atom representing a song name)
 % CITATION: adapted from https://github.com/thibaultdewit/Interactive-Tour-Guide
 make_api_call(URL, Songs) :-
@@ -88,18 +92,24 @@ call_api_single(Genre) :-
 	make_api_call(URL, _).
 	%% write(Songs).
 
-% calls the api via call_api_single() for each Genre in a list of Genre's
+% calls the api via call_api_single() for each Genre in a list of Genres
 call_api([]).
 call_api([Genre|T]) :-
 	call_api_single(Genre),
 	call_api(T).
-	
 
+isNumber([X]) :-
+	number(X).
+
+isMember([tag]) :-
+	member(tag,possible_tagArray).
 
 % -----USER INTERFACE-----
 q :-
-    write("Genre? (space-separated list) "), flush_output(current_output),
+    write("Would you like to select a genre or an artist? (space-separated list) "), flush_output(current_output),
     readln(Input),
+	( isNumber(Input) ->
+	writeln('sorry! I only accept words') ;
     %% write(Input),
     %% atomics_to_string(Input, InputStr),
-    call_api(Input).
+    call_api(Input)).
