@@ -8,8 +8,8 @@
 root_url("http://ws.audioscrobbler.com/2.0").
 api_key("5dd0808d6f467e08e647a024417e7318").
 api_method("tag.gettoptracks").
-possible_tagArray(["genre", "artist", "Genre", "Artist"]).
-% api_artistMethod("artist.gettoptracks").
+api_artistMethod("artist.gettoptracks").
+possible_tagArray([genre, artist]).
 
 
 
@@ -19,8 +19,8 @@ possible_tagArray(["genre", "artist", "Genre", "Artist"]).
 param_tag(Tag, TagParam) :-
 	string_concat("tag=", Tag, TagParam).
 
-% param_artist(Artist, ArtistParam) :-
-%	string_concat("artist=", Artist, ArtistParam).
+ param_artist(Artist, ArtistParam) :-
+	string_concat("artist=", Artist, ArtistParam).
 
 % converts a Method atom into the string "method=<Method>", for the "method" URL parameter
 param_method(Method, MethodParam) :-
@@ -55,6 +55,30 @@ build_url(Tag, URL) :-
 	string_concat(R8, "&", R9),
 	string_concat(R9, "format=json", URL).
 	%% write(URL).
+
+% constructs the URL to make the API call with; example URL:
+% http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=cher&limit=5&api_key=5dd0808d6f467e08e647a024417e7318&format=json
+build_arturl(Artist, URL) :-
+	root_url(Root),
+	api_key(Key),
+	api_method(Method),
+	param_tag(Artist, ArtistParam),
+	param_method(Method, MethodParam),
+	param_limit(10, LimitParam),
+	param_key(Key, KeyParam),
+	string_concat(Root, "?", R1),
+	string_concat(R1, MethodParam, R2),
+	string_concat(R2, "&", R3),
+	string_concat(R3, ArtistParam, R4),
+	string_concat(R4, "&", R5),
+	string_concat(R5, LimitParam, R6),
+	string_concat(R6, "&", R7),
+	string_concat(R7, KeyParam, R8),
+	string_concat(R8, "&", R9),
+	string_concat(R9, "format=json", URL).
+	%% write(URL).
+
+
 
 
 % -----API CALLER AND JSON HANDLERS-----
@@ -92,24 +116,71 @@ call_api_single(Genre) :-
 	make_api_call(URL, _).
 	%% write(Songs).
 
+% builds the URL and makes the API call for this particular Genre
+call_artapi_single(Artist) :-
+	atom_string(Artist, ArtistStr),
+	build_arturl(ArtistStr, URL),
+	make_api_call(URL, _).
+
 % calls the api via call_api_single() for each Genre in a list of Genres
 call_api([]).
 call_api([Genre|T]) :-
 	call_api_single(Genre),
 	call_api(T).
 
+% calls the api via call_api_single() for each Artist in a list of artists
+call_artapi([]).
+call_artapi([Artist|T]) :-
+	call_artapi_single(Artist),
+	call_artapi(T).
+
+% verifies if input is number
 isNumber([X]) :-
 	number(X).
 
-isMember([tag]) :-
-	member(tag,possible_tagArray).
+% verfiies if input is genre or artist 
+isGenreOrArtist([In]) :-
+	possible_tagArray(P),
+	member(In,P).
 
+% verfies if input is genre
+ifGenre(Input) :-
+	Input = 'genre'.
+
+% if input is genre then computes genre playlist
+genreOrArtist([Input]) :-
+	ifGenre(Input) ->
+	chooseGenre
+;	chooseArtist.
+
+% given input of genre calls api and computes genre playlist
+chooseGenre :-
+	write("please select a genre! Enter random letters for a randomizer! "), flush_output(current_output),
+	readln(Input),
+	not(isNumber(Input)) ->
+	call_api(Input)
+;	write('sorry! I only accept words').
+
+% given input of artist calls api and computes artist playlist
+chooseArtist :-
+	write("please select an artist! Enter random letters for a randomizer "), flush_output(current_output),
+	readln(Input),
+	not(isNumber(Input)) ->
+	call_artapi(Input)
+;	write('sorry! I only accept words').
+
+%% write(Input),
+%% atomics_to_string(Input, InputStr),
 % -----USER INTERFACE-----
 q :-
     write("Would you like to select a genre or an artist? (space-separated list) "), flush_output(current_output),
     readln(Input),
 	( isNumber(Input) ->
-	writeln('sorry! I only accept words') ;
-    %% write(Input),
-    %% atomics_to_string(Input, InputStr),
-    call_api(Input)).
+	writeln('sorry! I only accept words')
+;	not(isGenreOrArtist(Input)) ->
+	writeln('sorry! that is not a valid options') 
+;	genreOrArtist(Input)
+).
+
+
+
