@@ -66,13 +66,11 @@ write_songnames([Track|T]) :-
 	Song_url = Track.url,
 	string_concat("Artist", ": ", Artist),
 	string_concat(Artist, Song_artist, Artist_name),
- 	string_concat(Artist_name, " - ", Song_artistD),  
-	string_concat(Song_artistD, " Song: ", Song_artistD1), 
+	string_concat(Artist_name, "\nSong: ", Song_artistD1), 
  	string_concat(Song_artistD1, Song_name, Song_artist_name),
-	string_concat(Song_artist_name, " - ", Song_artist_name1), 
-	string_concat(Song_artist_name1, " Link: ", Song_artist_name2),
+	string_concat(Song_artist_name, "\nLink: ", Song_artist_name2),
 	string_concat(Song_artist_name2, Song_url, Song_artist_name3),  
- 	string_concat(Song_artist_name3, "\n", Song_final),
+ 	string_concat(Song_artist_name3, "\n\n", Song_final),
  	write(Song_final),
   	write_songnames(T).
 
@@ -84,94 +82,95 @@ make_api_call(URL, Songs) :-
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
  	json_to_songs(Dict, Songs),
-	(ifempty(Songs) ->
-	write("oh! we could not find any songs")
-;	write_songnames(Songs),
- 	write("\n")).
+	write_songnames(Songs),
+ 	write("\n").
 
-% builds the URL and makes the API call for this particular Genre
-call_api_single(Genre) :-
-	atom_string(Genre, GenreStr),
-	build_url(GenreStr, URL),
+% builds the URL and makes the API call for this particular Item
+call_api_single(Item) :-
+	%% atom_string(Item, ItemStr),
+	build_url(Item, URL),
 	make_api_call(URL, _).
-	%% write(Songs).
 
-% calls the api via call_api_single() for each Genre in a list of Genres
+% calls the api via call_api_single() for each Item in a list of Items
 call_api([]).
-call_api([Genre|T]) :-
-	call_api_single(Genre),
+call_api([Item|T]) :-
+	call_api_single(Item),
 	call_api(T).
 
-% verifies if input is number
+% verifies if X is a number
 isNumber([X]) :-
 	number(X).
 
-% verfiies if input is genre or artist 
+% verifies if Input is a Genre or an Artist 
 isGenreOrArtist([In]) :-
 	possible_tagArray(P),
 	member(In,P).
 
-% verfies if input is genre
-ifGenre(Input) :-
-	Input = 'genre'.
+%% % verifies if Input is the atom 'genre'
+%% ifGenre(Input) :-
+%% 	Input = 'genre'.
 
-% verfies if input is genre
-ifyear(Input) :-
-	Input = 'year'.
+%% % verifies if Input is the atom 'year'
+%% ifYear(Input) :-
+%% 	Input = 'year'.
 
-% verfies if input is genre
-ifartist(Input) :-
-	Input = 'artist'.
+%% % verifies if Input is the atom 'artist'
+%% ifArtist(Input) :-
+%% 	Input = 'artist'.
 
-ifempty(Songs) :-
-	Songs = [].
+%% % checks if Songs is an empty list
+%% ifEmpty(Songs) :-
+%% 	Songs = [].
 
 % if input is genre then computes genre playlist
 genreOrArtist([Input]) :-
-	ifGenre(Input) ->
+	Input = 'genre' ->
 	chooseGenre
-;	ifartist(Input) ->
+;	Input = 'artist' ->
 	chooseArtist
-;	ifyear(Input) ->
+;	Input = 'year' ->
 	chooseYear
-; write("The input is not year / artist / genre!").
+; 	write("The input is not a year/artist/genre!\n").
 
 % given input of genre calls api and computes genre playlist
 chooseGenre :-
-	write("Please select a Genre! Enter random letters for a randomizer! "), flush_output(current_output),
+	write("Enter a genre(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
 	not(isNumber(Input)) ->
-	call_api(Input)
-;	write('sorry! I only accept words').
+	atomics_to_string(Input, "+", InputStr),
+	call_api_single(InputStr)
+;	write("Sorry! I only accept words\n").
 
 % given input of artist calls api and computes artist playlist
 chooseArtist :-
-	write("Please select an Artist! Enter random letters for a randomizer "), flush_output(current_output),
+	write("Enter an artist(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
 	not(isNumber(Input)) ->
-	call_api(Input)
-;	write('sorry! I only accept words').
+	atomics_to_string(Input, "+", InputStr),
+	call_api_single(InputStr)
+;	write("Sorry! I only accept words\n").
 
 % given input of year calls api and computes year playlist
 chooseYear :-
-	write("Please select a Year! Enter random letters for a randomizer "), flush_output(current_output),
+	write("Enter a year(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
 	(isNumber(Input)) ->
-	call_api(Input)
-;	write('sorry! I only accept words').
+	atomics_to_string(Input, "+", InputStr),
+	call_api_single(InputStr)
+;	write("Sorry! I only accept words\n").
 
-%% write(Input),
-%% atomics_to_string(Input, InputStr),
+
+
 % -----USER INTERFACE-----
 simpleUI :-
 	write("Welcome to our application -> Song Recommender\n"),
-	write("You can select a Genre / Artist / Top Song of the specific year!\n"),
-    write("Please type genre/ artist/ year (space-separated list) "), flush_output(current_output),
+	write("You can select a genre/artist/year, and I'll return the top 5 songs of that category!\n"),
+    write('Please enter \"genre\", \"artist\", or \"year\": '), flush_output(current_output),
     readln(Input),
 	( isNumber(Input) ->
-	writeln('sorry! I only accept words')
+	writeln("Sorry! I only accept words\n")
 ;	not(isGenreOrArtist(Input)) ->
-	writeln('sorry! that is not a valid options') 
+	writeln("Sorry! That is not a valid option\n") 
 ;	genreOrArtist(Input)
 ).
 
