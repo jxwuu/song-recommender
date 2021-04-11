@@ -9,7 +9,7 @@ root_url("http://ws.audioscrobbler.com/2.0").
 api_key("5dd0808d6f467e08e647a024417e7318").
 api_method("tag.gettoptracks").
 api_artistMethod("artist.gettoptracks").
-possible_tagArray([genre, artist]).
+possible_tagArray([genre, artist, year]).
 
 
 
@@ -19,7 +19,7 @@ possible_tagArray([genre, artist]).
 param_tag(Tag, TagParam) :-
 	string_concat("tag=", Tag, TagParam).
 
- param_artist(Artist, ArtistParam) :-
+param_artist(Artist, ArtistParam) :-
 	string_concat("artist=", Artist, ArtistParam).
 
 % converts a Method atom into the string "method=<Method>", for the "method" URL parameter
@@ -92,9 +92,16 @@ write_songnames([]).
 write_songnames([Track|T]) :-
 	Song_name = Track.name,
  	Song_artist = Track.artist.name,
- 	string_concat(Song_artist, " - ", Song_artistD),
- 	string_concat(Song_artistD, Song_name, Song_artist_name),
- 	string_concat(Song_artist_name, "\n", Song_final),
+	Song_url = Track.url,
+	string_concat("Artist", ": ", Artist),
+	string_concat(Artist, Song_artist, Artist_name),
+ 	string_concat(Artist_name, " - ", Song_artistD),  
+	string_concat(Song_artistD, " Song: ", Song_artistD1), 
+ 	string_concat(Song_artistD1, Song_name, Song_artist_name),
+	string_concat(Song_artist_name, " - ", Song_artist_name1), 
+	string_concat(Song_artist_name1, " Link: ", Song_artist_name2),
+	string_concat(Song_artist_name2, Song_url, Song_artist_name3),  
+ 	string_concat(Song_artist_name3, "\n", Song_final),
  	write(Song_final),
   	write_songnames(T).
 
@@ -147,15 +154,27 @@ isGenreOrArtist([In]) :-
 ifGenre(Input) :-
 	Input = 'genre'.
 
+% verfies if input is genre
+ifyear(Input) :-
+	Input = 'year'.
+
+% verfies if input is genre
+ifartist(Input) :-
+	Input = 'artist'.
+
 % if input is genre then computes genre playlist
 genreOrArtist([Input]) :-
 	ifGenre(Input) ->
 	chooseGenre
-;	chooseArtist.
+;	ifartist(Input) ->
+	chooseArtist
+;	ifyear(Input) ->
+	chooseYear
+; write("The input is not year / artist / genre!").
 
 % given input of genre calls api and computes genre playlist
 chooseGenre :-
-	write("please select a genre! Enter random letters for a randomizer! "), flush_output(current_output),
+	write("Please select a Genre! Enter random letters for a randomizer! "), flush_output(current_output),
 	readln(Input),
 	not(isNumber(Input)) ->
 	call_api(Input)
@@ -163,17 +182,27 @@ chooseGenre :-
 
 % given input of artist calls api and computes artist playlist
 chooseArtist :-
-	write("please select an artist! Enter random letters for a randomizer "), flush_output(current_output),
+	write("Please select an Artist! Enter random letters for a randomizer "), flush_output(current_output),
 	readln(Input),
 	not(isNumber(Input)) ->
+	call_artapi(Input)
+;	write('sorry! I only accept words').
+
+% given input of year calls api and computes year playlist
+chooseYear :-
+	write("Please select a Year! Enter random letters for a randomizer "), flush_output(current_output),
+	readln(Input),
+	(isNumber(Input)) ->
 	call_artapi(Input)
 ;	write('sorry! I only accept words').
 
 %% write(Input),
 %% atomics_to_string(Input, InputStr),
 % -----USER INTERFACE-----
-q :-
-    write("Would you like to select a genre or an artist? (space-separated list) "), flush_output(current_output),
+simpleUI :-
+	write("Welcome to our application -> Song Recommender\n"),
+	write("You can select a Genre / Artist / Top Song of the specific year!\n"),
+    write("Please type genre/ artist/ year (space-separated list) "), flush_output(current_output),
     readln(Input),
 	( isNumber(Input) ->
 	writeln('sorry! I only accept words')
@@ -181,6 +210,15 @@ q :-
 	writeln('sorry! that is not a valid options') 
 ;	genreOrArtist(Input)
 ).
+
+% natural Language interface
+% working on it!
+naturalUI :-
+	write("Please enter your question!\n"),
+	readln(Input),
+	parse(Input, Result).
+
+
 
 
 
