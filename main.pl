@@ -8,7 +8,6 @@
 root_url("http://ws.audioscrobbler.com/2.0").
 api_key("5dd0808d6f467e08e647a024417e7318").
 api_method("tag.gettoptracks").
-api_artistMethod("artist.gettoptracks").
 possible_tagArray([genre, artist, year]).
 
 
@@ -19,8 +18,6 @@ possible_tagArray([genre, artist, year]).
 param_tag(Tag, TagParam) :-
 	string_concat("tag=", Tag, TagParam).
 
-param_artist(Artist, ArtistParam) :-
-	string_concat("artist=", Artist, ArtistParam).
 % converts a Method atom into the string "method=<Method>", for the "method" URL parameter
 param_method(Method, MethodParam) :-
 	string_concat("method=", Method, MethodParam).
@@ -47,28 +44,6 @@ build_url(Tag, URL) :-
 	string_concat(R1, MethodParam, R2),
 	string_concat(R2, "&", R3),
 	string_concat(R3, TagParam, R4),
-	string_concat(R4, "&", R5),
-	string_concat(R5, LimitParam, R6),
-	string_concat(R6, "&", R7),
-	string_concat(R7, KeyParam, R8),
-	string_concat(R8, "&", R9),
-	string_concat(R9, "format=json", URL).
-	%% write(URL).
-
-% constructs the URL to make the API call with; example URL:
-% http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=cher&limit=5&api_key=5dd0808d6f467e08e647a024417e7318&format=json
-build_arturl(Artist, URL) :-
-	root_url(Root),
-	api_key(Key),
-	api_method(Method),
-	param_tag(Artist, ArtistParam),
-	param_method(Method, MethodParam),
-	param_limit(10, LimitParam),
-	param_key(Key, KeyParam),
-	string_concat(Root, "?", R1),
-	string_concat(R1, MethodParam, R2),
-	string_concat(R2, "&", R3),
-	string_concat(R3, ArtistParam, R4),
 	string_concat(R4, "&", R5),
 	string_concat(R5, LimitParam, R6),
 	string_concat(R6, "&", R7),
@@ -109,10 +84,10 @@ make_api_call(URL, Songs) :-
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
  	json_to_songs(Dict, Songs),
-	%%ifempty(Songs) ->
-	%%write("oh! we could not find any songs")
-	write_songnames(Songs),
- 	write("\n").
+	(ifempty(Songs) ->
+	write("oh! we could not find any songs")
+;	write_songnames(Songs),
+ 	write("\n")).
 
 % builds the URL and makes the API call for this particular Genre
 call_api_single(Genre) :-
@@ -121,21 +96,12 @@ call_api_single(Genre) :-
 	make_api_call(URL, _).
 	%% write(Songs).
 
-% builds the URL and makes the API call for this particular Genre
-call_artapi_single(Artist) :-
-	atom_string(Artist, ArtistStr),
-	build_arturl(ArtistStr, URL),
-	make_api_call(URL, _).% calls the api via call_api_single() for each Genre in a list of Genres
+% calls the api via call_api_single() for each Genre in a list of Genres
 call_api([]).
 call_api([Genre|T]) :-
 	call_api_single(Genre),
 	call_api(T).
 
-% calls the api via call_api_single() for each Artist in a list of artists
-call_artapi([]).
-call_artapi([Artist|T]) :-
-	call_artapi_single(Artist),
-	call_artapi(T).
 % verifies if input is number
 isNumber([X]) :-
 	number(X).
