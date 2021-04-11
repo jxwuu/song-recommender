@@ -39,7 +39,9 @@ param_key(Key, KeyParam) :-
 build_url(Tag, URL) :-
 	root_url(Root),
 	api_key(Key),
-	api_method(Method),
+	(ifartist(Tag) ->
+		api_artistMethod(Method)
+	;	api_method(Method)),
 	param_tag(Tag, TagParam),
 	param_method(Method, MethodParam),
 	param_limit(10, LimitParam),
@@ -55,31 +57,6 @@ build_url(Tag, URL) :-
 	string_concat(R8, "&", R9),
 	string_concat(R9, "format=json", URL).
 	%% write(URL).
-
-% constructs the URL to make the API call with; example URL:
-% http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=cher&limit=5&api_key=5dd0808d6f467e08e647a024417e7318&format=json
-build_arturl(Artist, URL) :-
-	root_url(Root),
-	api_key(Key),
-	api_method(Method),
-	param_tag(Artist, ArtistParam),
-	param_method(Method, MethodParam),
-	param_limit(10, LimitParam),
-	param_key(Key, KeyParam),
-	string_concat(Root, "?", R1),
-	string_concat(R1, MethodParam, R2),
-	string_concat(R2, "&", R3),
-	string_concat(R3, ArtistParam, R4),
-	string_concat(R4, "&", R5),
-	string_concat(R5, LimitParam, R6),
-	string_concat(R6, "&", R7),
-	string_concat(R7, KeyParam, R8),
-	string_concat(R8, "&", R9),
-	string_concat(R9, "format=json", URL).
-	%% write(URL).
-
-
-
 
 % -----API CALLER AND JSON HANDLERS-----
 
@@ -113,8 +90,10 @@ make_api_call(URL, Songs) :-
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
  	json_to_songs(Dict, Songs),
- 	write_songnames(Songs),
- 	write("\n").
+	ifempty(Songs) ->
+	write("oh! we could not find any songs")
+;	(write_songnames(Songs),
+ 	write("\n")).
 
 % builds the URL and makes the API call for this particular Genre
 call_api_single(Genre) :-
@@ -123,23 +102,11 @@ call_api_single(Genre) :-
 	make_api_call(URL, _).
 	%% write(Songs).
 
-% builds the URL and makes the API call for this particular Genre
-call_artapi_single(Artist) :-
-	atom_string(Artist, ArtistStr),
-	build_arturl(ArtistStr, URL),
-	make_api_call(URL, _).
-
 % calls the api via call_api_single() for each Genre in a list of Genres
 call_api([]).
 call_api([Genre|T]) :-
 	call_api_single(Genre),
 	call_api(T).
-
-% calls the api via call_api_single() for each Artist in a list of artists
-call_artapi([]).
-call_artapi([Artist|T]) :-
-	call_artapi_single(Artist),
-	call_artapi(T).
 
 % verifies if input is number
 isNumber([X]) :-
@@ -161,6 +128,9 @@ ifyear(Input) :-
 % verfies if input is genre
 ifartist(Input) :-
 	Input = 'artist'.
+
+ifempty(Songs) :-
+	Songs = [].
 
 % if input is genre then computes genre playlist
 genreOrArtist([Input]) :-
@@ -185,7 +155,7 @@ chooseArtist :-
 	write("Please select an Artist! Enter random letters for a randomizer "), flush_output(current_output),
 	readln(Input),
 	not(isNumber(Input)) ->
-	call_artapi(Input)
+	call_api(Input)
 ;	write('sorry! I only accept words').
 
 % given input of year calls api and computes year playlist
@@ -193,7 +163,7 @@ chooseYear :-
 	write("Please select a Year! Enter random letters for a randomizer "), flush_output(current_output),
 	readln(Input),
 	(isNumber(Input)) ->
-	call_artapi(Input)
+	call_api(Input)
 ;	write('sorry! I only accept words').
 
 %% write(Input),
@@ -216,6 +186,7 @@ simpleUI :-
 naturalUI :-
 	write("Please enter your question!\n"),
 	readln(Input),
+	Result,
 	parse(Input, Result).
 
 
