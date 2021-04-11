@@ -106,7 +106,7 @@ call_api([Genre|T]) :-
 isNumber([X]) :-
 	number(X).
 
-% verfiies if input is genre or artist 
+% verfiies if input is genre or artist or year
 isGenreOrArtist([In]) :-
 	possible_tagArray(P),
 	member(In,P).
@@ -115,14 +115,15 @@ isGenreOrArtist([In]) :-
 ifGenre(Input) :-
 	Input = 'genre'.
 
-% verfies if input is genre
+% verfies if input is year
 ifyear(Input) :-
 	Input = 'year'.
 
-% verfies if input is genre
+% verfies if input is artist
 ifartist(Input) :-
 	Input = 'artist'.
 
+% checks if the list is empty 
 ifempty(Songs) :-
 	Songs = [].
 
