@@ -101,7 +101,7 @@ call_api([Item|T]) :-
 isNumber([X]) :-
 	number(X).
 
-% verifies if Input is a Genre or an Artist 
+% verfiies if input is genre or artist or year
 isGenreOrArtist([In]) :-
 	possible_tagArray(P),
 	member(In,P).
@@ -110,15 +110,15 @@ isGenreOrArtist([In]) :-
 %% ifGenre(Input) :-
 %% 	Input = 'genre'.
 
-%% % verifies if Input is the atom 'year'
+%% % verfies if input is year
 %% ifYear(Input) :-
 %% 	Input = 'year'.
 
-%% % verifies if Input is the atom 'artist'
+%% % verfies if input is artist
 %% ifArtist(Input) :-
 %% 	Input = 'artist'.
 
-%% % checks if Songs is an empty list
+%% % verfies if input is artist
 %% ifEmpty(Songs) :-
 %% 	Songs = [].
 
