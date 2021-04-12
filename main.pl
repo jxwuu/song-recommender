@@ -14,7 +14,6 @@ possible_tagArray([genre, artist, year]).
 ui_tag([g,n]).
 tag_option([track,artist,album]).
 
-
 % -----URL BUILDING FUNCTIONS-----
 
 % converts a Tag atom into the string "tag=<Tag>", for the "tag" URL parameter
@@ -146,24 +145,30 @@ make_api_call_track(URL, Songs) :-
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
  	json_to_songs_track(Dict, Songs),
-	write_songnames_track(Songs),
- 	write("\n").
+	(ifEmpty(Songs) ->
+	write("Sorry! There were no songs found!")
+;	write_songnames_track(Songs),
+ 	write("\n")).
 
 make_api_call_artist(URL, Songs) :-
  	http_open(URL, In_stream, []),
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
  	json_to_songs_artist(Dict, Songs),
-	write_songnames_artist(Songs),
- 	write("\n").
+	(ifEmpty(Songs) ->
+	write("Sorry! There were no songs found!")
+;	write_songnames_artist(Songs),
+ 	write("\n")).
 
 make_api_call_alblum(URL, Songs) :-
  	http_open(URL, In_stream, []),
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
  	json_to_songs_alblum(Dict, Songs),
-	write_songnames_track(Songs),
- 	write("\n").
+	(ifEmpty(Songs) ->
+	write("Sorry! There were no songs found!")
+;	write_songnames_track(Songs),
+ 	write("\n")).
 
 % builds the URL and makes the API call for this particular Item
 % For top track
@@ -202,6 +207,7 @@ isGenreOrArtist([In]) :-
 	possible_tagArray(P),
 	member(In,P).
 
+
 % verfiies if input is g or n (check UI)
 isNaturalOrSimple([In]) :-
 	ui_tag(P),
@@ -224,9 +230,16 @@ isTrackOrArtistOrAlbum([In]) :-
 %% ifArtist(Input) :-
 %% 	Input = 'artist'.
 
-%% % verfies if input is artist
-%% ifEmpty(Songs) :-
-%% 	Songs = [].
+% verfies if input is artist
+ ifEmpty(Songs) :-
+ 	Songs = [].
+
+
+% verifies possible year input
+isPossibleYear([Input]) :-
+	number(Input),
+	Input < 2022,
+	Input > 1800.
 
 % if input is genre then computes genre playlist
 genreOrArtistTrack([Input]) :-
@@ -293,10 +306,10 @@ chooseArtistTrack :-
 chooseYearTrack :-
 	write("Enter a year(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
-	(isNumber(Input)) ->
+	(isPossibleYear(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_track(InputStr)
-;	write("Sorry! I only accept words\n").
+;	write("Sorry! Invalid year\n").
 
 % For top artist
 chooseGenreArtist :-
@@ -320,10 +333,10 @@ chooseArtistArtist :-
 chooseYearArtist :-
 	write("Enter a year(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
-	(isNumber(Input)) ->
+	(isPossibleYear(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_artist(InputStr)
-;	write("Sorry! I only accept words\n").
+;	write("Sorry! Invalid years\n").
 
 % For top Albums
 chooseGenreAlbums :-
@@ -347,10 +360,10 @@ chooseArtistAlbums :-
 chooseYearAlbums :-
 	write("Enter a year(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
-	(isNumber(Input)) ->
+	(isPossibleYear(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_alblum(InputStr)
-;	write("Sorry! I only accept words\n").
+;	write("Sorry! Invalid year\n").
 
 % -----USER INTERFACE-----
 mainUI :-
