@@ -9,10 +9,6 @@ root_url("http://ws.audioscrobbler.com/2.0").
 api_key("5dd0808d6f467e08e647a024417e7318").
 api_method("tag.gettoptracks").
 possible_tagArray([genre, artist, year]).
-possible_genre([pop,hiphop,rock,swing,jazz,blues,classical,poprock,punkrock,emo,screamo,folk,indie,edm,electronic,techno,synth,rap,metal,
-				heavymetal,alt,alternative,funk,techno,soul,dance,house,reggae,world,gospel,kpop,grunge,ambient,opera,hardrock,orchestra,ballad,soundtrack,dubstep
-				,country, countryrock,industrial,psychedelic]).
-
 
 
 % -----URL BUILDING FUNCTIONS-----
