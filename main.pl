@@ -138,7 +138,7 @@ chooseGenre :-
 
 % given input of artist calls api and computes artist playlist
 chooseArtist :-
-	write("Enter an artist(s) (space-separated list):\n"), flush_output(current_output),
+	write("Enter an artist:\n"), flush_output(current_output),
 	readln(Input),
 	not(isNumber(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
@@ -147,7 +147,7 @@ chooseArtist :-
 
 % given input of year calls api and computes year playlist
 chooseYear :-
-	write("Enter a year(s) (space-separated list):\n"), flush_output(current_output),
+	write("Enter a single year:\n"), flush_output(current_output),
 	readln(Input),
 	(isPossibleYear(Input)) ->
 	atomics_to_string(Input,InputStr),
