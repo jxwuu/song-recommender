@@ -2,7 +2,9 @@
 :- use_module(library(http/json)).
 
 
-
+% Instruction
+% type mainUI. to start the program
+% cite: https://www.binarytides.com/linux-fun-commands/ for funny terminal output
 % -----CONSTANTS-----
 
 root_url("http://ws.audioscrobbler.com/2.0").
@@ -141,6 +143,8 @@ write_songnames_artist([Track|T]) :-
 % Songs is a list of Song atoms (Song is an atom representing a song name)
 % CITATION: adapted from https://github.com/thibaultdewit/Interactive-Tour-Guide
 make_api_call_track(URL, Songs) :-
+	write("Connecting to LastFM Server......\n"),
+	write(".................................\n\n"),
  	http_open(URL, In_stream, []),
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
@@ -151,6 +155,8 @@ make_api_call_track(URL, Songs) :-
  	write("\n")).
 
 make_api_call_artist(URL, Songs) :-
+	write("Connecting to LastFM Server......\n"),
+	write(".................................\n\n"),
  	http_open(URL, In_stream, []),
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
@@ -161,6 +167,8 @@ make_api_call_artist(URL, Songs) :-
  	write("\n")).
 
 make_api_call_alblum(URL, Songs) :-
+	write("Connecting to LastFM Server......\n"),
+	write(".................................\n\n"),
  	http_open(URL, In_stream, []),
  	json_read_dict(In_stream, Dict),
  	close(In_stream),
@@ -173,21 +181,69 @@ make_api_call_alblum(URL, Songs) :-
 % builds the URL and makes the API call for this particular Item
 % For top track
 call_api_single_track(Item) :-
-	write("Building Track URL........\n"),
+	write("(@@) (  ) (@)  ( )  @@    ()    @     O     @\n"),
+	write("                     (   )                   \n"),
+	write("                 (@@@@)                      \n"),
+	write("              (    )                         \n"),
+	write("            (@@@)							   \n"),
+	write("         ====        ________                ___________\n"),
+	write("     _D _|  |_______/        \\__I_I_____===__|_________|\n"),
+	write("      |(_)---  |   H\\________/ |   |        =|___ ___|      ________________\n"),
+	write("      /     |  |   H  |  |     |   |         ||_| |_||     _|\n"),
+	write("     |      |  |   H  |__--------------------| [___] |   =|\n"),
+	write("     | ________|___H__/__|_____/[][]~\\_______|       |   -|\n"),
+	write("     |/ |   |-----------I_____I [][] []  D   |=======|____|_________________\n"),
+	write("   __/ =| o |=-O=====O=====O=====O \\ ____Y___________|__|___________________\n"),
+	write("    |/-=|___|=    ||    ||    ||    |_____/~\\___/          |_D__D__D_|  |_D_\n"),
+	write("     \\_/      \\__/  \\__/  \\__/  \\__/      \\_/               \\_/   \\_/    \\_/\n"),
+	write("Building Track URL............\n"),
+	write("..............................\n\n"),
 	%% atom_string(Item, ItemStr),
 	build_url_toptracks(Item, URL),
 	make_api_call_track(URL, _).
 
 % For top artist
 call_api_single_artist(Item) :-
+write("(@@) (  ) (@)  ( )  @@    ()    @     O     @\n"),
+	write("                     (   )                   \n"),
+	write("                 (@@@@)                      \n"),
+	write("              (    )                         \n"),
+	write("            (@@@)							   \n"),
+	write("         ====        ________                ___________\n"),
+	write("     _D _|  |_______/        \\__I_I_____===__|_________|\n"),
+	write("      |(_)---  |   H\\________/ |   |        =|___ ___|      ________________\n"),
+	write("      /     |  |   H  |  |     |   |         ||_| |_||     _|\n"),
+	write("     |      |  |   H  |__--------------------| [___] |   =|\n"),
+	write("     | ________|___H__/__|_____/[][]~\\_______|       |   -|\n"),
+	write("     |/ |   |-----------I_____I [][] []  D   |=======|____|_________________\n"),
+	write("   __/ =| o |=-O=====O=====O=====O \\ ____Y___________|__|___________________\n"),
+	write("    |/-=|___|=    ||    ||    ||    |_____/~\\___/          |_D__D__D_|  |_D_\n"),
+	write("     \\_/      \\__/  \\__/  \\__/  \\__/      \\_/               \\_/   \\_/    \\_/\n"),
 	write("Building Artist URL........\n"),
+	write("..............................\n\n"),
 	%% atom_string(Item, ItemStr),
 	build_url_topartists(Item, URL),
 	make_api_call_artist(URL, _).
 
 % For top alblum
 call_api_single_alblum(Item) :-
+write("(@@) (  ) (@)  ( )  @@    ()    @     O     @\n"),
+	write("                     (   )                   \n"),
+	write("                 (@@@@)                      \n"),
+	write("              (    )                         \n"),
+	write("            (@@@)							   \n"),
+	write("         ====        ________                ___________\n"),
+	write("     _D _|  |_______/        \\__I_I_____===__|_________|\n"),
+	write("      |(_)---  |   H\\________/ |   |        =|___ ___|      ________________\n"),
+	write("      /     |  |   H  |  |     |   |         ||_| |_||     _|\n"),
+	write("     |      |  |   H  |__--------------------| [___] |   =|\n"),
+	write("     | ________|___H__/__|_____/[][]~\\_______|       |   -|\n"),
+	write("     |/ |   |-----------I_____I [][] []  D   |=======|____|_________________\n"),
+	write("   __/ =| o |=-O=====O=====O=====O \\ ____Y___________|__|___________________\n"),
+	write("    |/-=|___|=    ||    ||    ||    |_____/~\\___/          |_D__D__D_|  |_D_\n"),
+	write("     \\_/      \\__/  \\__/  \\__/  \\__/      \\_/               \\_/   \\_/    \\_/\n"),
 	write("Building Alblum URL........\n"),
+	write("..............................\n\n"),
 	%% atom_string(Item, ItemStr),
 	build_url_topalbums(Item, URL),
 	make_api_call_alblum(URL, _).
@@ -367,6 +423,11 @@ chooseYearAlbums :-
 
 % -----USER INTERFACE-----
 mainUI :-
+	write("__        __   _\n"),
+	write("\\ \\      / /__| | ___ ___  _ __ ___   ___\n"),
+    write(" \\ \\ /\\ / / _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\\n"),
+    write("  \\ V  V /  __/ | (_| (_) | | | | | |  __/\n"),
+    write("   \\_/\\_/ \\___|_|\\___\\___/|_| |_| |_|\\___|\n"),
 	write("Welcome to our application -> Song Recommender\n"),
 	write("Please select the UI -> General User Interface (g), Natural Language User Interface(n)"),
 	readln(Input),
@@ -389,8 +450,8 @@ simpleUI :-
 ).
 
 topTrackUI :-
-	write("-------------------------------------------\n"),
-	write("-----------------Top Track-----------------\n"),
+	write("\n-------------------------------------------\n"),
+	write("-----------------Top Track-----------------\n\n"),
 	write("Please also select a \"tag\" for genre/artist/year, and I'll return the top 5 songs of that category!\n"),
     write('Please enter \"genre\", \"artist\", or \"year\": '), flush_output(current_output),
     readln(Input),
@@ -403,8 +464,8 @@ topTrackUI :-
 
 
 topArtistUI :-
-	write("-------------------------------------------\n"),
-	write("-----------------Top Artist----------------\n"),
+	write("\n-------------------------------------------\n"),
+	write("-----------------Top Artist----------------\n\n"),
 	write("Please also select a \"tag\" for genre/artist/year, and I'll return the top 5 songs of that category!\n"),
     write('Please enter \"genre\" or \"year\": '), flush_output(current_output),
     readln(Input),
@@ -416,8 +477,8 @@ topArtistUI :-
 ).
 
 topAlbumsUI :- 
-	write("-------------------------------------------\n"),
-	write("-----------------Top Albums----------------\n"),
+	write("\n-------------------------------------------\n"),
+	write("-----------------Top Albums----------------\n\n"),
     write("Please also select a \"tag\" for genre/artist/year, and I'll return the top 5 songs of that category!\n"),
     write('Please enter \"genre\", \"artist\", or \"year\": '), flush_output(current_output),
     readln(Input),
