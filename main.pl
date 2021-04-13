@@ -13,6 +13,10 @@ api_method_toptrack("tag.gettoptracks").
 api_method_topartists("tag.gettopartists").
 api_method_albums("tag.gettopalbums").
 possible_tagArray([genre, artist, year]).
+possible_genreArray([rock,hip,hop,jazz, pop, heavy, metal, country, folk,blues, classical, rhythm, blues, electronic,
+					dance, punk, soul, reggae, house, alternative, alt, funk, techno, disco, ambient, lofi, instrumental, gospel,
+					singing, trance, grunge, swing, orchestra, world, dubstep, industrial, ska, soundtrack, hardcore, korean, chinese,
+					death, progressive, drum, opera, emo, experimental, bluegrass, vocal]).
 ui_tag([g,n]).
 tag_option([track,artist,album]).
 
@@ -286,7 +290,7 @@ isTrackOrArtistOrAlbum([In]) :-
 %% ifArtist(Input) :-
 %% 	Input = 'artist'.
 
-% verfies if input is artist
+% verifies if no songs are found 
  ifEmpty(Songs) :-
  	Songs = [].
 
@@ -297,14 +301,21 @@ isPossibleYear([Input]) :-
 	Input < 2022,
 	Input > 1800.
 
+% verifies if possible genre 
+isPossibleGenre([]).
+isPossibleGenre([Genre1 | Genre2]) :-
+	possible_genreArray(Ga),
+	member(Genre1, Ga),
+	isPossibleGenre(Genre2).
+
 % if input is genre then computes genre playlist
 genreOrArtistTrack([Input]) :-
 	Input = 'genre' ->
 	chooseGenreTrack
 ;	Input = 'artist' ->
-	chooseGenreTrack
+	chooseArtistTrack
 ;	Input = 'year' ->
-	chooseGenreTrack
+	chooseYearTrack
 ; 	write("The input is not a year/artist/genre!\n").
 
 genreOrArtistArtist([Input]) :-
@@ -344,23 +355,23 @@ trackOrArtistOrAlbum([Input]) :-
 chooseGenreTrack :-
 	write("Enter a genre(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
-	not(isNumber(Input)) ->
+	(not(isNumber(Input)), isPossibleGenre(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_track(InputStr)
-;	write("Sorry! I only accept words\n").
+;	write("Sorry! That was not a valid genre\n").
 
 % given input of artist calls api and computes artist playlist
 chooseArtistTrack :-
-	write("Enter an artist(s) (space-separated list):\n"), flush_output(current_output),
+	write("Enter an artist :\n"), flush_output(current_output),
 	readln(Input),
-	not(isNumber(Input)) ->
+	(not(isNumber(Input)), not(isPossibleGenre(Input)))  ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_track(InputStr)
-;	write("Sorry! I only accept numbers\n").
+;	write("Sorry! That was not a valid input\n").
 
 % given input of year calls api and computes year playlist
 chooseYearTrack :-
-	write("Enter a year(s) (space-separated list):\n"), flush_output(current_output),
+	write("Enter a year:\n"), flush_output(current_output),
 	readln(Input),
 	(isPossibleYear(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
@@ -371,50 +382,50 @@ chooseYearTrack :-
 chooseGenreArtist :-
 	write("Enter a genre(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
-	not(isNumber(Input)) ->
+	(not(isNumber(Input)), isPossibleGenre(Input))  ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_artist(InputStr)
-;	write("Sorry! I only accept words\n").
+;	write("Sorry! That was not a valid genre\n").
 
 % given input of artist calls api and computes artist playlist
 chooseArtistArtist :-
-	write("Enter an artist(s) (space-separated list):\n"), flush_output(current_output),
+	write("Enter an artist :\n"), flush_output(current_output),
 	readln(Input),
-	not(isNumber(Input)) ->
+	(not(isNumber(Input)), not(isPossibleGenre(Input))) ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_artist(InputStr)
-;	write("Sorry! I only accept numbers\n").
+;	write("Sorry! That was not a valid input\n").
 
 % given input of year calls api and computes year playlist
 chooseYearArtist :-
-	write("Enter a year(s) (space-separated list):\n"), flush_output(current_output),
+	write("Enter a year :\n"), flush_output(current_output),
 	readln(Input),
 	(isPossibleYear(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_artist(InputStr)
-;	write("Sorry! Invalid years\n").
+;	write("Sorry! Invalid year\n").
 
 % For top Albums
 chooseGenreAlbums :-
 	write("Enter a genre(s) (space-separated list):\n"), flush_output(current_output),
 	readln(Input),
-	not(isNumber(Input)) ->
+	(not(isNumber(Input)), isPossibleGenre(Input))  ->
+	atomics_to_string(Input, "+", InputStr),
+	call_api_single_alblum(InputStr)
+;	write("Sorry! That was not a valid genre\n").
+
+% given input of artist calls api and computes artist playlist
+chooseArtistAlbums :-
+	write("Enter an artist :\n"), flush_output(current_output),
+	readln(Input),
+	(not(isNumber(Input)), not(isPossibleGenre(Input)))  ->
 	atomics_to_string(Input, "+", InputStr),
 	call_api_single_alblum(InputStr)
 ;	write("Sorry! I only accept words\n").
 
-% given input of artist calls api and computes artist playlist
-chooseArtistAlbums :-
-	write("Enter an artist(s) (space-separated list):\n"), flush_output(current_output),
-	readln(Input),
-	not(isNumber(Input)) ->
-	atomics_to_string(Input, "+", InputStr),
-	call_api_single_alblum(InputStr)
-;	write("Sorry! I only accept numbers\n").
-
 % given input of year calls api and computes year playlist
 chooseYearAlbums :-
-	write("Enter a year(s) (space-separated list):\n"), flush_output(current_output),
+	write("Enter a year :\n"), flush_output(current_output),
 	readln(Input),
 	(isPossibleYear(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
