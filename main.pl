@@ -509,6 +509,7 @@ naturalUI :-
 	readln(Input),
 	parseInput(Input, []).
 % "I like Justin Bieber"
+% "Show me the top album of 2020"
 % "I really like Justin Bieber"
 % "What is the top song of 2021"
 % "What is the top song of 2020"
@@ -552,6 +553,8 @@ parseInput(['Who', is | L0],L1) :-
 parseInput(['Which', is | L0],L1) :-
     noun_phrase(L0,L1).
 parseInput(['Which'| L0],L1) :-
+    noun_phrase(L0,L1).
+parseInput(['Show', me| L0],L1) :-
     noun_phrase(L0,L1).
 parseInput(L0,L1) :-
     noun_phrase(L0,L1).
