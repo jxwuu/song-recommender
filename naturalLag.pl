@@ -77,10 +77,10 @@ noun([],[]).
 % default is to search the tag in TopTrack 
 feature(X, general) :- atomics_to_string(X, "+", InputStr), call_api_single_track(InputStr).
 feature(X, track) :- atomics_to_string(X, "+", InputStr), call_api_single_track(InputStr).
-feature(X, album) :- atomics_to_string(X, "+", InputStr), call_api_single_alblum(InputStr).
+feature(X, album) :- atomics_to_string(X, "+", InputStr), call_api_single_album(InputStr).
 feature(X, artist) :- atomics_to_string(X, "+", InputStr), call_api_single_artist(InputStr).
 % default tag is "pop"
 % for top song or album
 feature(topsong) :- call_api_single_track("pop").
-feature(topalbum) :- call_api_single_alblum("pop").
-feature(topartist) :- call_api_single_alblum("pop").
+feature(topalbum) :- call_api_single_album("pop").
+feature(topartist) :- call_api_single_album("pop").

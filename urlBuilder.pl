@@ -62,7 +62,7 @@ build_url_topartists(Tag, URL) :-
 	string_concat(R9, "format=json", URL).
 	%% write(URL).
 
-	% constructs the URL to make the API call with; example URL:
+% constructs the URL to make the API call with; example URL:
 % http://ws.audioscrobbler.com/2.0/?method=tag.gettopalbums&tag=rock&limit=5&api_key=5dd0808d6f467e08e647a024417e7318&format=json
 build_url_topalbums(Tag, URL) :-
 	root_url(Root),

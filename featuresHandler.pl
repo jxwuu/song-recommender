@@ -1,5 +1,5 @@
 % module that handles features
-% options that you can select within TopTrack/TopArtist/TopAlblum
+% options that you can select within TopTrack/TopArtist/Topalbum
 
 % given input of genre calls api and computes genre playlist
 % For top track
@@ -62,7 +62,7 @@ chooseGenreAlbums :-
 	readln(Input),
 	(not(isNumber(Input)), isPossibleGenre(Input))  ->
 	atomics_to_string(Input, "+", InputStr),
-	call_api_single_alblum(InputStr)
+	call_api_single_album(InputStr)
 ;	write("Sorry! That was not a valid genre\n").
 
 % given input of artist calls api and computes artist playlist
@@ -71,7 +71,7 @@ chooseArtistAlbums :-
 	readln(Input),
 	(not(isNumber(Input)), not(isPossibleGenre(Input)))  ->
 	atomics_to_string(Input, "+", InputStr),
-	call_api_single_alblum(InputStr)
+	call_api_single_album(InputStr)
 ;	write("Sorry! I only accept words\n").
 
 % given input of year calls api and computes year playlist
@@ -80,5 +80,5 @@ chooseYearAlbums :-
 	readln(Input),
 	(isPossibleYear(Input)) ->
 	atomics_to_string(Input, "+", InputStr),
-	call_api_single_alblum(InputStr)
+	call_api_single_album(InputStr)
 ;	write("Sorry! Invalid year\n").

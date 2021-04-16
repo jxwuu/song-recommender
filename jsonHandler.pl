@@ -5,7 +5,7 @@
 % into the list of songs the JSON contains
 json_to_songs_track(Dict, Dict.tracks.track).
 json_to_songs_artist(Dict, Dict.topartists.artist).
-json_to_songs_alblum(Dict, Dict.albums.album).
+json_to_songs_album(Dict, Dict.albums.album).
 
 % writes the "name" field of each Track to the console
 % Handle Top track and top album

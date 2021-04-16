@@ -15,33 +15,21 @@ tag_option([track,artist,album]).
 isNumber([X]) :-
 	number(X).
 
-% verfiies if input is genre or artist or year
+% verifies if input is genre or artist or year
 isGenreOrArtist([In]) :-
 	possible_tagArray(P),
 	member(In,P).
 
 
-% verfiies if input is g or n (check UI)
+% verifies if input is g or n (check UI)
 isNaturalOrSimple([In]) :-
 	ui_tag(P),
 	member(In,P).
 
-% verfiies if input is 1 or 2 or 3
+% verifies if input is 1 or 2 or 3
 isTrackOrArtistOrAlbum([In]) :-
 	tag_option(P),
 	member(In,P).
-
-%% % verifies if Input is the atom 'genre'
-%% ifGenre(Input) :-
-%% 	Input = 'genre'.
-
-%% % verfies if input is year
-%% ifYear(Input) :-
-%% 	Input = 'year'.
-
-%% % verfies if input is artist
-%% ifArtist(Input) :-
-%% 	Input = 'artist'.
 
 % verifies if no songs are found 
  ifEmpty(Songs) :-
