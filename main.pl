@@ -9,12 +9,14 @@
 :- use_module(library(http/http_open)).
 :- use_module(library(http/json)).
 
+% -----cite-----
+% https://www.binarytides.com/linux-fun-commands/ for funny terminal output
 
-% Instruction
+% -----Instruction-----
 % type mainUI. to start the program
-% cite: https://www.binarytides.com/linux-fun-commands/ for funny terminal output
-% -----CONSTANTS-----
+% start the program -> mainUI.
 
+% -----CONSTANTS-----
 root_url("http://ws.audioscrobbler.com/2.0").
 api_key("5dd0808d6f467e08e647a024417e7318").
 api_method_toptrack("tag.gettoptracks").
@@ -98,7 +100,7 @@ call_api([Item|T]) :-
 	call_api_single(Item),
 	call_api(T).
 
-% start with mainUI.
+
 
 
 

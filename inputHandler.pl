@@ -26,7 +26,7 @@ isNaturalOrSimple([In]) :-
 	ui_tag(P),
 	member(In,P).
 
-% verfiies if input is 1 or 2 or 3
+% verfiies if input is track/ artist / album
 isTrackOrArtistOrAlbum([In]) :-
 	tag_option(P),
 	member(In,P).
@@ -62,6 +62,7 @@ isPossibleGenre([Genre1 | Genre2]) :-
 	isPossibleGenre(Genre2).
 
 % if input is genre then computes genre playlist
+% handle option in Top Track
 genreOrArtistTrack([Input]) :-
 	Input = 'genre' ->
 	chooseGenreTrack
@@ -71,6 +72,7 @@ genreOrArtistTrack([Input]) :-
 	chooseYearTrack
 ; 	write("The input is not a year/artist/genre!\n").
 
+% handle option in Top Artist
 genreOrArtistArtist([Input]) :-
 	Input = 'genre' ->
 	chooseGenreArtist
@@ -78,6 +80,7 @@ genreOrArtistArtist([Input]) :-
 	chooseYearArtist
 ; 	write("The input is not a year/artist/genre!\n").
 
+% handle option in Top Album
 genreOrArtistAlbums([Input]) :-
 	Input = 'genre' ->
 	chooseGenreAlbums
@@ -87,6 +90,7 @@ genreOrArtistAlbums([Input]) :-
 	chooseYearAlbums
 ; 	write("The input is not a year/artist/genre!\n").
 
+% handle which UI (natural/general UI) are going to execute
 simpleOrNatural([Input]) :-
 	Input = 'g' ->
 	simpleUI
@@ -94,6 +98,7 @@ simpleOrNatural([Input]) :-
 	naturalUI
 ; 	write("The input is not a year/artist/genre!\n").
 
+% handle which features  are going to execute
 trackOrArtistOrAlbum([Input]) :-
 	Input = 'track' ->
 	topTrackUI
